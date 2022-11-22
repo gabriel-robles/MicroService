@@ -8,7 +8,6 @@ namespace CommandService.Controllers
     {
         public PlatformsController()
         {
-            
         }
 
         [HttpPost]
