@@ -30,9 +30,9 @@ namespace PlatformService.Controllers
         {
             Console.WriteLine("--> Getting Platforms...");
 
-            var platformItem = _repository.GetAllPlatforms();
+            var platformItems = _repository.GetAllPlatforms();
 
-            return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platformItem));
+            return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platformItems));
         }
 
         [HttpGet("{id}", Name = "GetPlatformById")]
