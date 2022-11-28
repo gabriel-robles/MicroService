@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CommandService.Data;
+using CommandService.EventProcessing;
+using CommandService.AsyncDataServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,8 @@ Console.WriteLine("--> using InMemory DB");
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddHostedService<MessageBusSubscriber>();
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseInMemoryDatabase("InMem"));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

@@ -59,7 +59,7 @@ namespace CommandService.Controllers
         {
             Console.WriteLine($"--> Hit CreateCommandForPlatform: {platformId}");
 
-            if(_repository.PlatformExists(platformId))
+            if(!_repository.PlatformExists(platformId))
             {
                 return NotFound();
             }
@@ -71,7 +71,7 @@ namespace CommandService.Controllers
 
             var commandReadDto = _mapper.Map<CommandReadDto>(command);
 
-            return CreatedAtRoute(nameof(GetCommandForPlatform), new { commandReadDto.Id }, commandReadDto);
+            return CreatedAtRoute(nameof(GetCommandForPlatform), new { platformId, commandId = commandReadDto.Id }, commandReadDto);
         }
     }
 }
