@@ -31,7 +31,7 @@ namespace CommandService.EventProcessing
             }
         }
 
-        private EventType DetermineEvent(string notificationMessage)
+        private static EventType DetermineEvent(string notificationMessage)
         {
             Console.WriteLine("--> Determining Event");
 

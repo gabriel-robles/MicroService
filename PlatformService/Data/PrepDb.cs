@@ -24,7 +24,6 @@ namespace PlatformService.Data
                 {
                     Console.WriteLine($"--> Could not run migrations: {ex.Message}");
                 }
-
             }
 
             if(!context.Platforms.Any())

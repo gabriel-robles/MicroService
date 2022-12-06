@@ -48,7 +48,7 @@ namespace CommandService.Controllers
 
             if(command == null)
             {
-                return NotFound();  
+                return NotFound();
             }
 
             return Ok(_mapper.Map<CommandReadDto>(command));
