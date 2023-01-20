@@ -8,15 +8,20 @@ namespace CommandService.AsyncDataServices
     public class MessageBusSubscriber : BackgroundService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<MessageBusSubscriber> _logger;
         private readonly IEventProcessor _eventProcessor;
         private IConnection _connection;
         private IModel _channel;
         private string _queueName;
 
-        public MessageBusSubscriber(IConfiguration configuration, IEventProcessor eventProcessor)
+        public MessageBusSubscriber(
+            IConfiguration configuration,
+            IEventProcessor eventProcessor,
+            ILogger<MessageBusSubscriber> logger)
         {
             _configuration = configuration;
             _eventProcessor = eventProcessor;
+            _logger = logger;
 
             InitializeRabbitMQ();
         }
@@ -35,7 +40,7 @@ namespace CommandService.AsyncDataServices
             _queueName = _channel.QueueDeclare().QueueName;
             _channel.QueueBind(queue: _queueName, exchange: "trigger", routingKey: "");
 
-            Console.WriteLine("--> Listening on the Message Bus...");
+            _logger.LogInformation("--> Listening on the Message Bus...");
 
             _connection.ConnectionShutdown += RabbitMQ_ConnectionShutDown;
         }
@@ -48,7 +53,7 @@ namespace CommandService.AsyncDataServices
 
             consumer.Received += (ModuleHandle, ea) =>
             {
-                Console.WriteLine("--> Event Received!");
+                _logger.LogInformation("--> Event Received!");
 
                 var body = ea.Body;
                 var notificationMessage = Encoding.UTF8.GetString(body.ToArray());
@@ -63,7 +68,7 @@ namespace CommandService.AsyncDataServices
 
         public override void Dispose()
         {
-            Console.WriteLine("MessageBus Disposed");
+            _logger.LogWarning("MessageBus Disposed");
 
             if(_channel.IsOpen)
             {
@@ -76,7 +81,7 @@ namespace CommandService.AsyncDataServices
 
         private void RabbitMQ_ConnectionShutDown(object sender, ShutdownEventArgs e)
         {
-            Console.WriteLine("--> RabbitMQ Connection Shutdown");
+            _logger.LogWarning("--> RabbitMQ Connection Shutdown");
         }
     }
 }

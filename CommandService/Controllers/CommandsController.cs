@@ -11,18 +11,23 @@ namespace CommandService.Controllers
     public class CommandsController : ControllerBase
     {
         private readonly ICommandRepository _repository;
+        private readonly ILogger<CommandsController> _logger;
         private readonly IMapper _mapper;
 
-        public CommandsController(ICommandRepository repository, IMapper mapper)
+        public CommandsController(
+            ICommandRepository repository,
+            IMapper mapper,
+            ILogger<CommandsController> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<CommandReadDto>> GetCommandsForPlatform([FromRoute] int platformId)
         {
-            Console.WriteLine($"--> Hit GetCommandsForPlatform: {platformId}");
+            _logger.LogInformation("--> Hit GetCommandsForPlatform: {platformId}", platformId);
 
             if(!_repository.PlatformExists(platformId))
             {
@@ -37,7 +42,7 @@ namespace CommandService.Controllers
         [HttpGet("{commandId}", Name = "GetCommandForPlatform")]
         public ActionResult<CommandReadDto> GetCommandForPlatform([FromRoute] int platformId, [FromRoute] int commandId)
         {
-            Console.WriteLine($"--> Hit GetCommandForPlatform: {platformId} / {commandId}");
+            _logger.LogInformation("--> Hit GetCommandForPlatform: {platformId} / {commandId}", platformId, commandId);
 
             if(!_repository.PlatformExists(platformId))
             {
@@ -57,7 +62,7 @@ namespace CommandService.Controllers
         [HttpPost]
         public ActionResult<CommandReadDto> CreateCommandForPlatform([FromRoute] int platformId, [FromBody] CommandCreateDto commandDto)
         {
-            Console.WriteLine($"--> Hit CreateCommandForPlatform: {platformId}");
+            _logger.LogInformation("--> Hit CreateCommandForPlatform: {platformId}", platformId);
 
             if(!_repository.PlatformExists(platformId))
             {

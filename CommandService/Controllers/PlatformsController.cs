@@ -11,17 +11,21 @@ namespace CommandService.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ICommandRepository _repository;
+        private readonly ILogger<PlatformsController> _logger;
 
-        public PlatformsController(ICommandRepository repository, IMapper mapper)
+        public PlatformsController(ICommandRepository repository,
+            IMapper mapper,
+            ILogger<PlatformsController> logger)
         {
             _mapper = mapper;
             _repository = repository;
+            _logger = logger;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<PlatformReadDto>> GetPlatforms()
         {
-            Console.WriteLine("--> Getting Platforms from CommandService");
+            _logger.LogInformation("--> Getting Platforms from CommandService");
 
             var platformItems = _repository.GetAllPlatforms();
 
@@ -31,7 +35,7 @@ namespace CommandService.Controllers
         [HttpPost]
         public ActionResult TestInboundConnection()
         {
-            Console.WriteLine("--> Inbound POST # Command Service");
+            _logger.LogInformation("--> Inbound POST # Command Service");
 
             return Ok("Inbound test of from Platforms Controller");
         }

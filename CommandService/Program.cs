@@ -6,6 +6,13 @@ using CommandService.SyncDataServices.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
+IConfiguration configuration = builder.Configuration;
+
+builder.Services.AddLogging(logBuilder => 
+{
+    logBuilder.AddSeq(configuration.GetSection("Seq"));
+});
+
 Console.WriteLine("--> using InMemory DB");
 
 // Add services to the container.

@@ -9,16 +9,18 @@ namespace CommandService.SyncDataServices.Grpc
     {
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly ILogger<PlatformDataClient> _logger;
 
-        public PlatformDataClient(IConfiguration configuration, IMapper mapper)
+        public PlatformDataClient(IConfiguration configuration, IMapper mapper, ILogger<PlatformDataClient> logger)
         {
             _configuration = configuration;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public IEnumerable<Platform> ReturnAllPlatforms()
         {
-            Console.WriteLine($"--> Calling GRPC Service {_configuration["GrpcPlatform"]}");
+            _logger.LogInformation("--> Calling GRPC Service {GrpcPlatform}", _configuration["GrpcPlatform"]);
 
             var channel = GrpcChannel.ForAddress(_configuration["GrpcPlatform"]);
             var client = new GrpcPlatform.GrpcPlatformClient(channel);
@@ -31,7 +33,7 @@ namespace CommandService.SyncDataServices.Grpc
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"--> Could not call GRPC Server {ex.Message}");
+                _logger.LogError("--> Could not call GRPC Server {ex.Message}", ex.Message);
                 return null;
             }
         }

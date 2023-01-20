@@ -1,0 +1,53 @@
+apiVersion: v1 
+kind: PersistentVolumeClaim
+metadata:
+  name: seq-claim
+spec:
+  resources:
+    requests:
+      storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seq-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seq
+  template:
+    metadata:
+      labels:
+        app: seq
+    spec:
+      containers:
+        - name: seq
+          image: datalust/seq:latest
+          ports:
+            - containerPort: 80
+          env:
+          - name: ACCEPT_EULA
+            value: "Y"
+          volumeMounts:
+          - mountPath: /var/opt/seq/data
+            name: seqdb
+      volumes:
+      - name: seqdb
+        persistentVolumeClaim:
+          claimName: seq-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seq-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: seq
+  ports:
+  - protocol: TCP
+    port: 5341
+    targetPort: 80

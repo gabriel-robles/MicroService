@@ -11,15 +11,17 @@ namespace CommandService.Data
             {
                 var grpcClient = serviceScope.ServiceProvider.GetService<IPlatformDataClient>();
 
+                var logger = serviceScope.ServiceProvider.GetService<ILogger<PrepDb>>();
+
                 var platforms = grpcClient.ReturnAllPlatforms();
 
-                SeedData(serviceScope.ServiceProvider.GetService<ICommandRepository>(), platforms);
+                SeedData(serviceScope.ServiceProvider.GetService<ICommandRepository>(), platforms, logger);
             };
         }
 
-        private static void SeedData(ICommandRepository repository, IEnumerable<Platform> platforms)
+        private static void SeedData(ICommandRepository repository, IEnumerable<Platform> platforms, ILogger<PrepDb> logger)
         {
-            Console.WriteLine("Seeding new platforms...");
+            logger.LogInformation("Seeding new platforms...");
 
             foreach (var platform in platforms)
             {
